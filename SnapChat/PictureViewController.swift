@@ -15,6 +15,7 @@ class PictureViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var descriptionTextField: UITextField!
     @IBOutlet weak var nextButton: UIButton!
+
     
     var imagePicker = UIImagePickerController()
     
@@ -57,17 +58,20 @@ class PictureViewController: UIViewController, UIImagePickerControllerDelegate, 
         imagesFolder.child("\(NSUUID().uuidString).jpg").putData(imageData, metadata: nil, completion: {(metadata,error) in
             print("We tried to upload image")
             if error != nil {
-                print("We have error:\(error)")
+                print("We have error:\(String(describing: error))")
             } else {
-                print(metadata?.downloadURL())
-                self.performSegue(withIdentifier: "selectUserSegue", sender: nil)
+                print(metadata?.downloadURL()! as Any)
+                self.performSegue(withIdentifier: "selectUserSegue", sender: metadata?.downloadURL()!.absoluteString)
             }
         })
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-    
+        let nextVC = segue.destination as! SelectUserViewController
+        nextVC.imageURL = sender as! String
+        nextVC.descrip = descriptionTextField.text!
     }
+    
     
     
     
