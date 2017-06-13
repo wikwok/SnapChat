@@ -19,11 +19,15 @@ class PictureViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     var imagePicker = UIImagePickerController()
     
+    var uuid = NSUUID().uuidString
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
         imagePicker.delegate = self
+        
+        nextButton.isEnabled = false
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
@@ -32,12 +36,14 @@ class PictureViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         imageView.backgroundColor = UIColor.clear
         
+        nextButton.isEnabled = true
+        
         imagePicker.dismiss(animated: true, completion: nil)
     }
 
     @IBAction func cameraTapped(_ sender: Any) {
         
-        imagePicker.sourceType = .savedPhotosAlbum
+        imagePicker.sourceType =  .camera //.savedPhotosAlbum
         imagePicker.allowsEditing = false
         
         present(imagePicker, animated: true, completion: nil)
@@ -55,7 +61,7 @@ class PictureViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         //let imageData = UIImagePNGRepresentation(imageView.image!)!
         
-        imagesFolder.child("\(NSUUID().uuidString).jpg").putData(imageData, metadata: nil, completion: {(metadata,error) in
+        imagesFolder.child("\(uuid).jpg").putData(imageData, metadata: nil, completion: {(metadata,error) in
             print("We tried to upload image")
             if error != nil {
                 print("We have error:\(String(describing: error))")
@@ -70,6 +76,7 @@ class PictureViewController: UIViewController, UIImagePickerControllerDelegate, 
         let nextVC = segue.destination as! SelectUserViewController
         nextVC.imageURL = sender as! String
         nextVC.descrip = descriptionTextField.text!
+        nextVC.uuid = uuid
     }
     
     

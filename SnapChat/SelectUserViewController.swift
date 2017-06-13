@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseDatabase
+import FirebaseAuth
 
 class SelectUserViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
@@ -16,6 +17,7 @@ class SelectUserViewController: UIViewController, UITableViewDataSource, UITable
     
     var imageURL = ""
     var descrip = ""
+    var uuid = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,7 +38,7 @@ class SelectUserViewController: UIViewController, UITableViewDataSource, UITable
             user.email = snapDict["email"] as! String
             print(user.email)
             
-            //test
+            //test // reduandant code
             for child in snapshot.children {
                 let snap = child as! DataSnapshot //each child is a snapshot
                 //let dict = snap.value as! [String:AnyObject] //the value is a dictionaly
@@ -73,8 +75,9 @@ class SelectUserViewController: UIViewController, UITableViewDataSource, UITable
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let user = users[indexPath.row]
-        let snap = ["from":user.email, "description":descrip, "imageURL":imageURL]
+        let snap = ["from":Auth.auth().currentUser?.email, "description":descrip, "imageURL":imageURL, "uuid":uuid]
         Database.database().reference().child("users").child(user.uid).child("snaps").childByAutoId().setValue(snap)
+        navigationController?.popToRootViewController(animated: true)
     }
     
 
